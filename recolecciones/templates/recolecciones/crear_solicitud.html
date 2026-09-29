@@ -1,0 +1,48 @@
+{% extends 'recolecciones/base.html' %}
+
+{% block content %}
+<h2>Nueva Solicitud de Retiro</h2>
+
+<form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    
+    <label><b>1. Fotografía de la Chatarra:</b></label>
+    <!-- Atributo capture="environment" abre directamente la cámara trasera en móviles -->
+    <input type="file" name="fotografia" accept="image/*" capture="environment" required>
+
+    <label><b>2. Categoría del Residuo:</b></label>
+    <select name="categoria" required>
+        <option value="">-- Seleccionar Categoría --</option>
+        {% for cat in categorias %}
+            <option value="{{ cat.id }}">{{ cat.nombre_categoria }}</option>
+        {% endfor %}
+    </select>
+
+    <label><b>3. Detalles Adicionales:</b></label>
+    <textarea name="notas_adicionales" rows="3" placeholder="Ej. Lavadora en desuso, sacar por el portón."></textarea>
+
+    <!-- Campos Ocultos para Coordenadas GPS -->
+    <input type="hidden" name="latitud" id="latitud">
+    <input type="hidden" name="longitud" id="longitud">
+
+    <div id="gps-status" style="font-size: 0.85rem; color: #666; margin: 8px 0;">
+        📍 Obteniendo coordenadas GPS...
+    </div>
+
+    <button type="submit" class="btn">PUBLICAR SOLICITUD</button>
+</form>
+
+<script>
+    // Captura nativa de GPS mediante la Web API navigator.geolocation
+    if ("geolocation" in navigator) {
+        navigator.geolocation.getCurrentPosition(function(position) {
+            document.getElementById("latitud").value = position.coords.latitude;
+            document.getElementById("longitud").value = position.coords.longitude;
+            document.getElementById("gps-status").innerHTML = "✅ Ubicación GPS capturada exitosamente (" + 
+                position.coords.latitude.toFixed(4) + ", " + position.coords.longitude.toFixed(4) + ")";
+        }, function(error) {
+            document.getElementById("gps-status").innerHTML = "⚠️ No se pudo obtener el GPS automáticamente.";
+        });
+    }
+</script>
+{% endblock %}

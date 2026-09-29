@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EcoCollector PWA</title>
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; margin: 0; padding: 0; background-color: #f4f6f8; color: #333; }
+        header { background-color: #2e7d32; color: white; padding: 15px; text-align: center; font-weight: bold; font-size: 1.2rem; }
+        nav { display: flex; justify-content: space-around; background-color: #1b5e20; padding: 10px 0; }
+        nav a { color: white; text-decoration: none; font-size: 0.9rem; font-weight: bold; }
+        .container { max-width: 500px; margin: 15px auto; padding: 15px; background: white; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .btn { display: block; width: 100%; padding: 12px; background-color: #2e7d32; color: white; text-align: center; border: none; border-radius: 8px; font-weight: bold; font-size: 1rem; cursor: pointer; text-decoration: none; box-sizing: border-box; margin-top: 10px; }
+        .btn-danger { background-color: #d32f2f; }
+        .alert { padding: 10px; margin-bottom: 15px; border-radius: 6px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; font-size: 0.9rem; }
+        input, select, textarea { width: 100%; padding: 10px; margin: 8px 0; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-size: 0.95rem; }
+        .card { border: 1px solid #e0e0e0; border-radius: 8px; padding: 12px; margin-bottom: 12px; background: #fafafa; }
+        .badge { display: inline-block; padding: 4px 8px; border-radius: 12px; font-size: 0.75rem; font-weight: bold; color: white; background: #ff9800; }
+    </style>
+</head>
+<body>
+    <header>♻️ EcoCollector PWA</header>
+    <nav>
+        <a href="{% url 'home' %}">Inicio</a>
+        <a href="{% url 'crear_solicitud' %}">+ Nueva Solicitud</a>
+        <a href="{% url 'historial_solicitudes' %}">Historial</a>
+    </nav>
+    <div class="container">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+</html>
