@@ -90,6 +90,47 @@ def cancelar_solicitud_view(request, pk):
         messages.info(request, f"La solicitud #{solicitud.id} ha sido cancelada.")
     return redirect('historial_solicitudes')
 
+def modificar_solicitud_view(request, pk):
+    solicitud = get_object_or_404(SolicitudRetiro, pk=pk)
+
+    if request.method == 'POST':
+        categoria_id = request.POST.get('categoria')
+        notas = request.POST.get('notas_adicionales')
+        estado = request.POST.get('estado_actual')
+
+        solicitud.categoria = get_object_or_404(
+            CategoriaChatarra,
+            id=categoria_id
+        )
+        solicitud.notas_adicionales = notas
+
+        if estado in dict(SolicitudRetiro.ESTADOS):
+            solicitud.estado_actual = estado
+
+        solicitud.save()
+
+        messages.success(
+            request,
+            f"¡Solicitud #{solicitud.id} modificada correctamente!"
+        )
+
+        return redirect('historial_solicitudes')
+
+    categorias = CategoriaChatarra.objects.all()
+    estados = SolicitudRetiro.ESTADOS
+
+    context = {
+        'solicitud': solicitud,
+        'categorias': categorias,
+        'estados': estados,
+    }
+
+    return render(
+        request,
+        'recolecciones/modificar_solicitud.html',
+        context
+    )
+
 @login_required
 def solicitudes_disponibles_view(request):
     """Muestra las solicitudes publicadas disponibles para los recolectores."""

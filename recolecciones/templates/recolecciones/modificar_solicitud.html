@@ -1,0 +1,55 @@
+{% extends 'recolecciones/base.html' %}
+
+{% block content %}
+
+<h2>Modificar Solicitud #{{ solicitud.id }}</h2>
+
+<form method="POST">
+
+    {% csrf_token %}
+
+    <label><b>Categoría:</b></label>
+
+    <select name="categoria" required>
+        {% for cat in categorias %}
+            <option value="{{ cat.id }}"
+                {% if cat.id == solicitud.categoria.id %}selected{% endif %}>
+                {{ cat.nombre_categoria }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label><b>Estado:</b></label>
+
+    <select name="estado_actual" required>
+        {% for key, val in estados %}
+            <option value="{{ key }}"
+                {% if key == solicitud.estado_actual %}selected{% endif %}>
+                {{ val }}
+            </option>
+        {% endfor %}
+    </select>
+
+    <label><b>Detalles adicionales:</b></label>
+
+    <textarea
+        name="notas_adicionales"
+        rows="4"
+        placeholder="Detalles de la solicitud..."
+    >{{ solicitud.notas_adicionales|default:"" }}</textarea>
+
+    <button type="submit" class="btn">
+        GUARDAR CAMBIOS
+    </button>
+
+</form>
+
+<a
+    href="{% url 'historial_solicitudes' %}"
+    class="btn"
+    style="background-color: #757575;"
+>
+    VOLVER AL HISTORIAL
+</a>
+
+{% endblock %}
