@@ -1,9 +1,11 @@
 {% extends 'recolecciones/base.html' %}
 
 {% block content %}
+
 <h2>Historial y Consultas</h2>
 
 <!-- Filtros de Búsqueda -->
+
 <form method="GET" style="margin-bottom: 20px;">
     <select name="categoria">
         <option value="">-- Todas las Categorías --</option>
@@ -14,40 +16,113 @@
         {% endfor %}
     </select>
 
-    <select name="estado">
-        <option value="">-- Todos los Estados --</option>
-        {% for key, val in estados %}
-            <option value="{{ key }}" {% if key == estado_selected %}selected{% endif %}>{{ val }}</option>
-        {% endfor %}
-    </select>
+```
+<select name="estado">
+    <option value="">-- Todos los Estados --</option>
+    {% for key, val in estados %}
+        <option value="{{ key }}" {% if key == estado_selected %}selected{% endif %}>
+            {{ val }}
+        </option>
+    {% endfor %}
+</select>
 
-    <button type="submit" class="btn" style="background-color: #1565c0;">FILTRAR CONSULTA</button>
+<button type="submit" class="btn" style="background-color: #1565c0;">
+    FILTRAR CONSULTA
+</button>
+```
+
 </form>
 
 <hr>
 
 <!-- Lista de Resultados -->
-{% for sol in solicitudes %}
-    <div class="card">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-            <strong>Solicitud #{{ sol.id }}</strong>
-            <span class="badge">{{ sol.get_estado_actual_display }}</span>
-        </div>
-        <p style="font-size: 0.9rem; margin: 6px 0;"><b>Categoría:</b> {{ sol.categoria.nombre_categoria }}</p>
-        <p style="font-size: 0.85rem; color: #555;">{{ sol.notas_adicionales|default:"Sin notas adicionales." }}</p>
 
-        {% if sol.fotografias.first %}
-            <img src="{{ sol.fotografias.first.imagen.url }}" style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 6px; margin-top: 6px;">
-        {% endif %}
+{% for sol in solicitudes %} <div class="card">
 
-        {% if sol.estado_actual != 'CANCELADA' %}
-            <form method="POST" action="{% url 'cancelar_solicitud' sol.id %}" style="margin-top: 8px;">
-                {% csrf_token %}
-                <button type="submit" class="btn btn-danger" style="padding: 6px; font-size: 0.8rem;">Cancelar Solicitud</button>
-            </form>
-        {% endif %}
+```
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <strong>Solicitud #{{ sol.id }}</strong>
+        <span class="badge">{{ sol.get_estado_actual_display }}</span>
     </div>
-{% empty %}
-    <p>No se encontraron solicitudes que coincidan con la búsqueda.</p>
+
+    <p style="font-size: 0.9rem; margin: 6px 0;">
+        <b>Categoría:</b> {{ sol.categoria.nombre_categoria }}
+    </p>
+
+    <p style="font-size: 0.85rem; color: #555;">
+        {{ sol.notas_adicionales|default:"Sin notas adicionales." }}
+    </p>
+
+    <!-- Fotografía -->
+    {% if sol.fotografias.first %}
+        <img src="{{ sol.fotografias.first.imagen.url }}"
+             style="width: 100%; max-height: 180px; object-fit: cover; border-radius: 6px; margin-top: 6px;">
+    {% endif %}
+
+    <!-- UBICACIÓN -->
+    {% if sol.ubicacion %}
+        <div style="
+            margin-top: 12px;
+            padding: 10px;
+            background: #f1f8e9;
+            border-radius: 6px;
+            border-left: 4px solid #43a047;
+        ">
+            <strong>📍 Ubicación</strong>
+
+            {% if sol.ubicacion.direccion_formateada %}
+                <p style="margin: 6px 0;">
+                    {{ sol.ubicacion.direccion_formateada }}
+                </p>
+            {% endif %}
+
+            <p style="font-size: 0.8rem; color: #555; margin: 4px 0;">
+                Latitud: {{ sol.ubicacion.latitud }}<br>
+                Longitud: {{ sol.ubicacion.longitud }}
+            </p>
+
+            <a href="https://www.google.com/maps?q={{ sol.ubicacion.latitud }},{{ sol.ubicacion.longitud }}"
+               target="_blank"
+               class="btn"
+               style="
+                   display: inline-block;
+                   margin-top: 5px;
+                   background-color: #2e7d32;
+                   color: white;
+                   text-decoration: none;
+                   padding: 7px 10px;
+                   border-radius: 5px;
+                   font-size: 0.85rem;
+               ">
+                📍 Ver ubicación en Google Maps
+            </a>
+        </div>
+    {% else %}
+        <p style="font-size: 0.85rem; color: #999; margin-top: 10px;">
+            📍 Sin ubicación registrada.
+        </p>
+    {% endif %}
+
+    <!-- Cancelar -->
+    {% if sol.estado_actual != 'CANCELADA' %}
+        <form method="POST"
+              action="{% url 'cancelar_solicitud' sol.id %}"
+              style="margin-top: 8px;">
+
+            {% csrf_token %}
+
+            <button type="submit"
+                    class="btn btn-danger"
+                    style="padding: 6px; font-size: 0.8rem;">
+                Cancelar Solicitud
+            </button>
+        </form>
+    {% endif %}
+
+</div>
+```
+
+{% empty %} <p>No se encontraron solicitudes que coincidan con la búsqueda.</p>
 {% endfor %}
+
 {% endblock %}

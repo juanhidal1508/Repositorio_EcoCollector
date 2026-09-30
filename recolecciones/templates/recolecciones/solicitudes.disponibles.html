@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Solicitudes disponibles - EcoCollector</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+            color: #222;
+        }
+
+        header {
+            background: #1f7a4d;
+            color: white;
+            padding: 20px;
+        }
+
+        header h1 {
+            margin: 0;
+        }
+
+        .contenedor {
+            max-width: 1000px;
+            margin: 30px auto;
+            padding: 0 20px;
+        }
+
+        .solicitud {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        }
+
+        .solicitud h2 {
+            margin-top: 0;
+        }
+
+        .estado {
+            display: inline-block;
+            padding: 6px 10px;
+            border-radius: 20px;
+            background: #e8f5e9;
+            color: #1f7a4d;
+            font-weight: bold;
+        }
+
+        .dato {
+            margin: 8px 0;
+        }
+
+        .sin-solicitudes {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .boton {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 10px 16px;
+            background: #1f7a4d;
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1 style="color:red; text-align:center;">
+        ESTA ES LA PANTALLA DEL RECOLECTOR
+    </h1>
+
+<header>
+    <h1>EcoCollector</h1>
+    <p>Solicitudes disponibles para recolectores</p>
+</header>
+
+<div class="contenedor">
+
+    {% if solicitudes %}
+
+        {% for solicitud in solicitudes %}
+
+            <div class="solicitud">
+
+                <h2>Solicitud #{{ solicitud.id }}</h2>
+
+                <p class="dato">
+                    <strong>Categoría:</strong>
+                    {{ solicitud.categoria.nombre_categoria }}
+                </p>
+
+                <p class="dato">
+                    <strong>Estado:</strong>
+                    <span class="estado">
+                        {{ solicitud.get_estado_actual_display }}
+                    </span>
+                </p>
+
+                {% if solicitud.notas_adicionales %}
+                    <p class="dato">
+                        <strong>Notas:</strong>
+                        {{ solicitud.notas_adicionales }}
+                    </p>
+                {% endif %}
+
+                {% if solicitud.ubicacion %}
+                    <p class="dato">
+                        <strong>Ubicación:</strong>
+                        {{ solicitud.ubicacion.direccion_formateada }}
+                    </p>
+
+                    <p class="dato">
+                        <strong>Latitud:</strong>
+                        {{ solicitud.ubicacion.latitud }}
+                    </p>
+
+                    <p class="dato">
+                        <strong>Longitud:</strong>
+                        {{ solicitud.ubicacion.longitud }}
+                    </p>
+
+                    <a
+                        class="boton"
+                        href="https://www.google.com/maps?q={{ solicitud.ubicacion.latitud }}, {{ solicitud.ubicacion.longitud }}"
+                        target="_blank"
+                    >
+                        Ver ubicación en Google Maps
+                    </a>
+                {% endif %}
+
+            </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="sin-solicitudes">
+            <h2>No hay solicitudes disponibles</h2>
+            <p>Actualmente no existen solicitudes publicadas pendientes de recolección.</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>

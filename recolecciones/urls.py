@@ -6,4 +6,5 @@ urlpatterns = [
     path('solicitudes/nueva/', views.crear_solicitud_view, name='crear_solicitud'),
     path('solicitudes/historial/', views.historial_solicitudes_view, name='historial_solicitudes'),
     path('solicitudes/<int:pk>/cancelar/', views.cancelar_solicitud_view, name='cancelar_solicitud'),
+    path('recolector/solicitudes/',views.historial_solicitudes_view, name='solicitudes_disponibles'),
 ]

@@ -89,3 +89,22 @@ def cancelar_solicitud_view(request, pk):
         solicitud.save()
         messages.info(request, f"La solicitud #{solicitud.id} ha sido cancelada.")
     return redirect('historial_solicitudes')
+
+@login_required
+def solicitudes_disponibles_view(request):
+    """Muestra las solicitudes publicadas disponibles para los recolectores."""
+    solicitudes = SolicitudRetiro.objects.filter(
+        estado_actual='PUBLICADA',
+        recolector_isnull=True
+    ).select_related(
+        'categoria',
+        'ubicacion'
+    ).prefetch_related(
+        'fotografias'
+    )
+
+    return render(
+        request,
+        'recolecciones/solicitudes_disponibles.html',
+        {'solicitudes': solicitudes}
+    )
